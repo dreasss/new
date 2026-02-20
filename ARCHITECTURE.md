@@ -64,7 +64,10 @@
 10. Web portal fetches `/tickets` and immediately shows created ticket with history trail.
 11. Agent can add comments/update status; changes are persisted and visible in history.
 
-### 1.4 Honest test-mode (without fake success)
+# codex/define-architecture-for-support-system-b3l975
+# 1.4 Honest test-mode (without fabricated success)
+# 1.4 Honest test-mode (without fake success)
+# main
 - Test-mode is **feature-flagged** and only for integrations requiring external credentials.
 - Allowed local replacements:
   - STT: local on-box recognizer.
@@ -194,7 +197,10 @@ class SpeakerRecognizer(Protocol):
   7. `END_CALL`
 - On `CREATE_TICKET`, transaction writes `ticket` + first `comment` + `history` atomically.
 
-### 4.3 Acceptance checks (no stubs)
+# codex/define-architecture-for-support-system-b3l975
+### 4.3 Acceptance checks (no placeholder handlers)
+ # 4.3 Acceptance checks (no stubs)
+# main
 1. Place SIP call → bot greeting is played.
 2. Provide required data via speech/DTMF fallback.
 3. Ticket row appears in PostgreSQL with non-null required fields.
