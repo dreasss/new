@@ -52,7 +52,9 @@ from app.services.sso import (
     validate_oidc_config,
     validate_saml_config,
 )
+# codex/define-architecture-for-support-system-e3u2rv
 from app.services.system_settings import default_setting_config, validate_setting_config
+# main
 from app.services.tickets import (
     assert_support_or_admin,
     assert_ticket_access,
@@ -605,8 +607,12 @@ def assign_self(ticket_id: int, request: Request, user: User = Depends(get_curre
 def admin_get_setting(section: str, _: User = Depends(require_admin), db: Session = Depends(get_db)) -> SystemSettingResponse:
     row = db.query(SystemSetting).filter(SystemSetting.section == section).first()
     if not row:
+# codex/define-architecture-for-support-system-e3u2rv
         config = default_setting_config(section)
         row = SystemSetting(section=section, config_json=json.dumps(config))
+
+        row = SystemSetting(section=section, config_json=json.dumps({}))
+# main
         db.add(row)
         db.commit()
         db.refresh(row)
@@ -620,12 +626,20 @@ def admin_set_setting(
     user: User = Depends(require_admin),
     db: Session = Depends(get_db),
 ) -> SystemSettingResponse:
+# codex/define-architecture-for-support-system-e3u2rv
     validated_config = validate_setting_config(section, payload.config)
     row = db.query(SystemSetting).filter(SystemSetting.section == section).first()
     if not row:
         row = SystemSetting(section=section, config_json=json.dumps(validated_config), updated_by_user_id=user.id)
     else:
         row.config_json = json.dumps(validated_config)
+
+    row = db.query(SystemSetting).filter(SystemSetting.section == section).first()
+    if not row:
+        row = SystemSetting(section=section, config_json=json.dumps(payload.config), updated_by_user_id=user.id)
+    else:
+        row.config_json = json.dumps(payload.config)
+# main
         row.updated_by_user_id = user.id
         row.updated_at = datetime.now(UTC)
     db.add(row)
@@ -634,13 +648,22 @@ def admin_set_setting(
     return SystemSettingResponse(section=row.section, config=json.loads(row.config_json))
 
 
+# codex/define-architecture-for-support-system-e3u2rv
+
+
+
+# main
 @app.get("/api/v1/service/settings/{section}")
 def service_get_setting(section: str, x_service_token: str = Header(default=""), db: Session = Depends(get_db)) -> SystemSettingResponse:
     if x_service_token != os.getenv("SERVICE_TOKEN", "dev-service-token"):
         raise HTTPException(status_code=401, detail="Invalid service token")
     row = db.query(SystemSetting).filter(SystemSetting.section == section).first()
     if not row:
+# codex/define-architecture-for-support-system-e3u2rv
         return SystemSettingResponse(section=section, config=default_setting_config(section))
+
+        return SystemSettingResponse(section=section, config={})
+# main
     return SystemSettingResponse(section=row.section, config=json.loads(row.config_json))
 
 
@@ -649,7 +672,10 @@ def public_branding(db: Session = Depends(get_db)) -> dict:
     row = db.query(SystemSetting).filter(SystemSetting.section == "branding").first()
     return {"config": json.loads(row.config_json) if row else {}}
 
+# codex/define-architecture-for-support-system-e3u2rv
 
+
+# main
 @app.exception_handler(HTTPException)
 async def http_exception_handler(request: Request, exc: HTTPException):
     return JSONResponse(

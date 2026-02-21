@@ -1,6 +1,7 @@
 from pathlib import Path
 
 import pytest
+# codex/define-architecture-for-support-system-e3u2rv
 from app.providers import (
     LocalFileTTSAdapter,
     ProviderConfigError,
@@ -8,6 +9,10 @@ from app.providers import (
     build_stt_adapter,
     build_tts_adapter,
 )
+
+
+from app.providers import LocalFileTTSAdapter, SpeechKitTTSAdapter
+# main
 
 
 @pytest.mark.asyncio
@@ -53,6 +58,7 @@ async def test_speechkit_tts_request_shape(monkeypatch: pytest.MonkeyPatch, tmp_
     assert captured["data"]["folderId"] == "f"
     assert captured["data"]["text"] == "Текст"
     assert media.startswith("sound:custom_tts/")
+# codex/define-architecture-for-support-system-e3u2rv
 
 
 def test_speechkit_provider_requires_keys(monkeypatch: pytest.MonkeyPatch) -> None:
@@ -81,3 +87,5 @@ def test_test_mode_uses_local_assets(monkeypatch: pytest.MonkeyPatch, tmp_path: 
     assert tts_mode == "local_assets"
     assert stt_mode == "dtmf_fallback"
     assert stt is not None
+
+# main
