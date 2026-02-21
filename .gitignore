@@ -5,3 +5,8 @@ node_modules/
 web-portal/.next/
 
 .mypy_cache/
+#codex/define-architecture-for-support-system-e3u2rv
+
+*.egg-info/
+
+#main
