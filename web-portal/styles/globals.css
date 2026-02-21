@@ -1,0 +1,29 @@
+:root {
+  --primary-color: #2563eb;
+  --brand-name: Support Portal;
+}
+
+body {
+  margin: 0;
+  font-family: Arial, Helvetica, sans-serif;
+  background: #f3f4f6;
+  color: #111827;
+}
+
+main {
+  border-top: 4px solid var(--primary-color);
+  max-width: 900px;
+  margin: 2rem auto;
+  background: #ffffff;
+  padding: 1.5rem;
+  border-radius: 10px;
+}
+
+input, textarea, button {
+  margin: 0.3rem 0;
+  padding: 0.55rem;
+}
+
+button {
+  cursor: pointer;
+}
