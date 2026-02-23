@@ -64,6 +64,9 @@
 10. Web portal fetches `/tickets` and immediately shows created ticket with history trail.
 11. Agent can add comments/update status; changes are persisted and visible in history.
 
+# codex/define-architecture-for-support-system-cphd8w
+### 1.4 Honest test-mode (without fabricated success)
+=======
 # codex/define-architecture-for-support-system-j19u82
 ### 1.4 Honest test-mode (without fabricated success)
 =======
@@ -74,6 +77,7 @@
 # 1.4 Honest test-mode (without fabricated success)
 # 1.4 Honest test-mode (without fake success)
 # main
+
 
 - Test-mode is **feature-flagged** and only for integrations requiring external credentials.
 - Allowed local replacements:
@@ -204,6 +208,9 @@ class SpeakerRecognizer(Protocol):
   7. `END_CALL`
 - On `CREATE_TICKET`, transaction writes `ticket` + first `comment` + `history` atomically.
 
+#codex/define-architecture-for-support-system-cphd8w
+### 4.3 Acceptance checks (no placeholder handlers)
+=======
 # codex/define-architecture-for-support-system-j19u82
 ### 4.3 Acceptance checks (no placeholder handlers)
 =======
@@ -214,6 +221,7 @@ class SpeakerRecognizer(Protocol):
 ### 4.3 Acceptance checks (no placeholder handlers)
  # 4.3 Acceptance checks (no stubs)
 # main
+
 1. Place SIP call → bot greeting is played.
 2. Provide required data via speech/DTMF fallback.
 3. Ticket row appears in PostgreSQL with non-null required fields.

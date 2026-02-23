@@ -5,6 +5,10 @@ node_modules/
 web-portal/.next/
 
 .mypy_cache/
+# codex/define-architecture-for-support-system-cphd8w
+
+*.egg-info/
+=======
 # codex/define-architecture-for-support-system-j19u82
 
 *.egg-info/
@@ -15,3 +19,4 @@ web-portal/.next/
 
 # main
 # main
+

@@ -1,10 +1,14 @@
 import asyncio
+# codex/define-architecture-for-support-system-cphd8w
+import base64
+=======
 # codex/define-architecture-for-support-system-j19u82
 import base64
 =======
 # codex/define-architecture-for-support-system-e3u2rv
 import base64
 
+# main
 # main
 # main
 import json
@@ -21,6 +25,11 @@ from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 
 from app.fsm import CallFSM, Step
+# codex/define-architecture-for-support-system-cphd8w
+from app.providers import LocalFileTTSAdapter, build_stt_adapter, build_tts_adapter
+from app.recordings import get_wav_path, is_valid_wav, start_recording
+
+=======
 # codex/define-architecture-for-support-system-j19u82
 from app.providers import LocalFileTTSAdapter, build_stt_adapter, build_tts_adapter
 from app.recordings import get_wav_path, is_valid_wav, start_recording
@@ -34,6 +43,7 @@ from app.providers import build_stt_adapter, build_tts_adapter
 # main
 
 # main
+# main
 app = FastAPI(title="telephony-bot")
 
 ARI_URL = os.getenv("ASTERISK_ARI_BASE_URL", "http://asterisk:8088/ari")
@@ -45,11 +55,14 @@ CORE_API_URL = os.getenv("CORE_API_URL", "http://core-api:8000")
 SERVICE_TOKEN = os.getenv("SERVICE_TOKEN", "dev-service-token")
 TEST_MODE = os.getenv("INTEGRATIONS_TEST_MODE", "true").lower() == "true"
 DEFAULT_HANDOFF = os.getenv("BOT_HANDOFF_ON_INCOMPLETE", "false").lower() == "true"
+# codex/define-architecture-for-support-system-cphd8w
+=======
 # codex/define-architecture-for-support-system-j19u82
 =======
 # codex/define-architecture-for-support-system-e3u2rv
 
 RECORDINGS_DIR = os.getenv("BOT_RECORDINGS_DIR", "/shared/recordings")
+# main
 # main
 # main
 
@@ -69,20 +82,26 @@ state = {"connected": False, "last_error": "not checked", "tts_provider": "", "s
 sessions: dict[str, CallFSM] = {}
 channel_to_call: dict[str, str] = {}
 dtmf_buffer: dict[str, str] = defaultdict(str)
+# codex/define-architecture-for-support-system-cphd8w
+=======
 # codex/define-architecture-for-support-system-j19u82
 =======
 # codex/define-architecture-for-support-system-e3u2rv
+# main
 # main
 recording_meta: dict[str, dict[str, str]] = {}
 settings_cache: dict[str, dict] = {}
 fallback_tts_adapter = LocalFileTTSAdapter(os.getenv("BOT_SOUNDS_DIR", "/shared/sounds/custom_tts"))
 
+# codex/define-architecture-for-support-system-cphd8w
+=======
 # codex/define-architecture-for-support-system-j19u82
 =======
 recording_to_channel: dict[str, str] = {}
 settings_cache: dict[str, dict] = {}
 # main
 
+# main
 # main
 
 def normalize_text(step: Step, value: str) -> str:
@@ -96,9 +115,12 @@ def normalize_text(step: Step, value: str) -> str:
     return text
 
 
+# codex/define-architecture-for-support-system-cphd8w
+=======
 # codex/define-architecture-for-support-system-j19u82
 =======
 # codex/define-architecture-for-support-system-e3u2rv
+# main
 # main
 def wav_file_to_b64(wav_path: str) -> str | None:
     is_valid, _ = is_valid_wav(wav_path)
@@ -109,9 +131,12 @@ def wav_file_to_b64(wav_path: str) -> str | None:
     return base64.b64encode(data).decode("ascii")
 
 
+# codex/define-architecture-for-support-system-cphd8w
+=======
 # codex/define-architecture-for-support-system-j19u82
 =======
 
+# main
 # main
 # main
 @dataclass
@@ -178,6 +203,9 @@ async def write_call_log(call_id: str, event_type: str, payload: dict) -> None:
     await core_post("/api/v1/call-logs", {"call_id": call_id, "event_type": event_type, **payload})
 
 
+# codex/define-architecture-for-support-system-cphd8w
+async def play_text_prompt(call_id: str, channel_id: str, step: Step) -> None:
+=======
 # codex/define-architecture-for-support-system-j19u82
 async def play_text_prompt(call_id: str, channel_id: str, step: Step) -> None:
 =======
@@ -187,6 +215,7 @@ async def play_text_prompt(call_id: str, channel_id: str, step: Step) -> None:
 async def play_text_prompt(channel_id: str, step: Step) -> None:
 # main
 # main
+# main
     phrases = settings_cache.get("phrases", {})
     speech = settings_cache.get("speechkit", {})
     text = phrases.get(step.value, PROMPT_TEXTS[step])
@@ -194,9 +223,12 @@ async def play_text_prompt(channel_id: str, step: Step) -> None:
     speed = float(speech.get("speed", os.getenv("SPEECHKIT_SPEED", "1.0")))
     volume = int(speech.get("volume", os.getenv("SPEECHKIT_VOLUME", "0")))
 
+# codex/define-architecture-for-support-system-cphd8w
+=======
 # codex/define-architecture-for-support-system-j19u82
 =======
 # codex/define-architecture-for-support-system-e3u2rv
+# main
 # main
     try:
         media = await tts_adapter.synthesize(text=text, voice=voice, speed=speed, volume=volume, key_hint=step.value)
@@ -214,6 +246,8 @@ async def start_step_recording(call_id: str, channel_id: str, step: Step) -> str
     rec_name = start_recording(call_id, channel_id, step)
     wav_path = get_wav_path(rec_name)
     recording_meta[rec_name] = {"channel_id": channel_id, "call_id": call_id, "step": step.value, "wav_path": wav_path}
+# codex/define-architecture-for-support-system-cphd8w
+=======
 # codex/define-architecture-for-support-system-j19u82
 =======
 
@@ -224,6 +258,7 @@ async def start_step_recording(call_id: str, channel_id: str, step: Step) -> str
 async def start_step_recording(call_id: str, channel_id: str, step: Step) -> None:
     rec_name = f"{call_id}-{step.value.lower()}"
     recording_to_channel[rec_name] = channel_id
+# main
 # main
 # main
     await ari.post(
@@ -237,9 +272,12 @@ async def start_step_recording(call_id: str, channel_id: str, step: Step) -> Non
             "terminateOn": "none",
         },
     )
+# codex/define-architecture-for-support-system-cphd8w
+=======
 # codex/define-architecture-for-support-system-j19u82
 =======
 # codex/define-architecture-for-support-system-e3u2rv
+# main
 # main
     await write_call_log(call_id, "recording_started", {"recording_name": rec_name, "step": step.value, "audio_path": wav_path})
     return rec_name
@@ -261,6 +299,8 @@ async def maybe_identify_speaker(call_id: str, wav_path: str) -> None:
     fsm.data["speaker_sample_path"] = wav_path
     fsm.data["speaker_sample_size"] = str(len(audio_b64))
 
+# codex/define-architecture-for-support-system-cphd8w
+=======
 # codex/define-architecture-for-support-system-j19u82
 =======
 
@@ -271,13 +311,17 @@ async def ask_for_consent_and_identify(call_id: str, channel_id: str, caller: st
     fsm = sessions[call_id]
 # main
 # main
+# main
     if identify.get("consent_required"):
         fsm.data["needs_consent"] = "1"
         if identify.get("user_id"):
             fsm.data["consent_user_id"] = str(identify["user_id"])
+# codex/define-architecture-for-support-system-cphd8w
+=======
 # codex/define-architecture-for-support-system-j19u82
 =======
 # codex/define-architecture-for-support-system-e3u2rv
+# main
 # main
 
     await write_call_log(
@@ -321,11 +365,14 @@ async def maybe_enroll_speaker(call_id: str) -> None:
         },
     )
 
+# codex/define-architecture-for-support-system-cphd8w
+=======
 # codex/define-architecture-for-support-system-j19u82
 =======
         await write_call_log(call_id, "speaker_consent_required", identify)
 # main
 
+# main
 # main
 
 async def handle_step_input(call_id: str, channel_id: str, utterance: str | None) -> None:
@@ -339,6 +386,9 @@ async def handle_step_input(call_id: str, channel_id: str, utterance: str | None
     handoff = bool(telephony_cfg.get("handoff_on_incomplete", DEFAULT_HANDOFF))
 
     if new_step == Step.INCOMPLETE:
+# codex/define-architecture-for-support-system-cphd8w
+        await play_text_prompt(call_id, channel_id, Step.INCOMPLETE)
+=======
 # codex/define-architecture-for-support-system-j19u82
         await play_text_prompt(call_id, channel_id, Step.INCOMPLETE)
 =======
@@ -346,6 +396,7 @@ async def handle_step_input(call_id: str, channel_id: str, utterance: str | None
         await play_text_prompt(call_id, channel_id, Step.INCOMPLETE)
 
         await play_text_prompt(channel_id, Step.INCOMPLETE)
+# main
 # main
 # main
         if handoff:
@@ -363,9 +414,12 @@ async def handle_step_input(call_id: str, channel_id: str, utterance: str | None
         ticket = await core_post("/api/v1/tickets", {"subject": subject, "description": description, "channel": "voice"})
         await write_call_log(call_id, "ticket_created", {"ticket_id": ticket.get("id")})
 
+# codex/define-architecture-for-support-system-cphd8w
+=======
 # codex/define-architecture-for-support-system-j19u82
 =======
 # codex/define-architecture-for-support-system-e3u2rv
+# main
 # main
         await maybe_enroll_speaker(call_id)
 
@@ -374,6 +428,8 @@ async def handle_step_input(call_id: str, channel_id: str, utterance: str | None
         return
 
     await play_text_prompt(call_id, channel_id, new_step)
+# codex/define-architecture-for-support-system-cphd8w
+=======
 # codex/define-architecture-for-support-system-j19u82
 =======
 
@@ -395,6 +451,7 @@ async def handle_step_input(call_id: str, channel_id: str, utterance: str | None
     await play_text_prompt(channel_id, new_step)
 # main
 # main
+# main
     if new_step in {Step.FIO, Step.DEPARTMENT, Step.CABINET, Step.PROBLEM, Step.EXTRA}:
         await start_step_recording(call_id, channel_id, new_step)
 
@@ -407,23 +464,30 @@ async def process_ari_event(event: dict) -> None:
         call_id = channel_id
         channel_to_call[channel_id] = call_id
         sessions[call_id] = CallFSM(call_id=call_id)
+# codex/define-architecture-for-support-system-cphd8w
+        sessions[call_id].data["caller"] = ch.get("caller", {}).get("number", "")
+=======
 # codex/define-architecture-for-support-system-j19u82
         sessions[call_id].data["caller"] = ch.get("caller", {}).get("number", "")
 =======
 # codex/define-architecture-for-support-system-e3u2rv
         sessions[call_id].data["caller"] = ch.get("caller", {}).get("number", "")
 
+# main
 # main
 # main
         await load_runtime_settings()
         await ari.post(f"/channels/{channel_id}/answer")
         await write_call_log(call_id, "call_started", {"caller": ch.get("caller", {}).get("number", "")})
         await handle_step_input(call_id, channel_id, "start")
+# codex/define-architecture-for-support-system-cphd8w
+=======
 # codex/define-architecture-for-support-system-j19u82
 =======
 # codex/define-architecture-for-support-system-e3u2rv
 
         await ask_for_consent_and_identify(call_id, channel_id, ch.get("caller", {}).get("number", ""))
+# main
 # main
 # main
 
@@ -440,6 +504,11 @@ async def process_ari_event(event: dict) -> None:
             if fsm.data.get("needs_consent") == "1" and "consent_answer" not in fsm.data:
                 fsm.data["consent_answer"] = value or "2"
                 await write_call_log(call_id, "speaker_consent_answer", {"answer": fsm.data["consent_answer"]})
+# codex/define-architecture-for-support-system-cphd8w
+                await play_text_prompt(call_id, channel_id, fsm.step)
+                if fsm.step in {Step.FIO, Step.DEPARTMENT, Step.CABINET, Step.PROBLEM, Step.EXTRA}:
+                    await start_step_recording(call_id, channel_id, fsm.step)
+=======
 # codex/define-architecture-for-support-system-j19u82
                 await play_text_prompt(call_id, channel_id, fsm.step)
                 if fsm.step in {Step.FIO, Step.DEPARTMENT, Step.CABINET, Step.PROBLEM, Step.EXTRA}:
@@ -453,6 +522,7 @@ async def process_ari_event(event: dict) -> None:
                 await play_text_prompt(channel_id, fsm.step)
 # main
 # main
+# main
                 return
             await handle_step_input(call_id, channel_id, value)
         else:
@@ -461,9 +531,12 @@ async def process_ari_event(event: dict) -> None:
     elif event_type == "RecordingFinished":
         rec = event.get("recording", {})
         rec_name = rec.get("name", "")
+# codex/define-architecture-for-support-system-cphd8w
+=======
 # codex/define-architecture-for-support-system-j19u82
 =======
 # codex/define-architecture-for-support-system-e3u2rv
+# main
 # main
         rec_meta = recording_meta.get(rec_name)
         if not rec_meta:
@@ -492,6 +565,8 @@ async def process_ari_event(event: dict) -> None:
 
         await maybe_identify_speaker(call_id, wav_path)
 
+# codex/define-architecture-for-support-system-cphd8w
+=======
 # codex/define-architecture-for-support-system-j19u82
 =======
 
@@ -504,13 +579,17 @@ async def process_ari_event(event: dict) -> None:
         wav_path = os.path.join(RECORDINGS_DIR, f"{rec_name}.wav")
 # main
 # main
+# main
         text = ""
         if stt_mode == "speechkit":
             try:
                 text = await stt_adapter.transcribe(wav_path)
+# codex/define-architecture-for-support-system-cphd8w
+=======
 # codex/define-architecture-for-support-system-j19u82
 =======
 # codex/define-architecture-for-support-system-e3u2rv
+# main
 # main
                 await write_call_log(call_id, "stt_result", {"text": text, "provider": "speechkit", "audio_path": wav_path})
             except Exception as exc:
@@ -521,12 +600,15 @@ async def process_ari_event(event: dict) -> None:
                 )
                 if not TEST_MODE:
                     raise
+# codex/define-architecture-for-support-system-cphd8w
+=======
 # codex/define-architecture-for-support-system-j19u82
 =======
 
                 await write_call_log(call_id, "stt_result", {"text": text, "provider": "speechkit"})
             except Exception as exc:
                 await write_call_log(call_id, "stt_error", {"error": str(exc), "provider": "speechkit"})
+# main
 # main
 # main
         if text:
