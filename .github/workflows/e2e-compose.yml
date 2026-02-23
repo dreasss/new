@@ -1,0 +1,46 @@
+name: e2e-compose
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  e2e:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Make scripts executable
+        run: chmod +x scripts/*.sh
+
+      - name: Lint
+        run: ./scripts/lint.sh
+
+      - name: Tests
+        run: ./scripts/test.sh
+
+      - name: Runtime acceptance (docker compose)
+        run: ./scripts/acceptance.sh
+
+      - name: Compose status on failure
+        if: failure()
+        run: docker compose ps
+
+      - name: Service logs tail on failure
+        if: failure()
+        run: |
+          mkdir -p artifacts
+          docker compose logs --tail 200 core-api | tee artifacts/core-api.log
+          docker compose logs --tail 200 telephony-bot | tee artifacts/telephony-bot.log
+          docker compose logs --tail 200 asterisk | tee artifacts/asterisk.log
+
+      - name: Upload runtime artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: compose-runtime-logs
+          if-no-files-found: warn
+          path: |
+            artifacts/*.log

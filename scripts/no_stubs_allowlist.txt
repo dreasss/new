@@ -1,0 +1,13 @@
+# Allowlist format:
+# path:line # WHY OK: explanation
+
+core-api/app/services/sso.py:27 # WHY OK: abstract adapter contract intentionally uses pass for unimplemented interface method.
+core-api/app/services/sso.py:31 # WHY OK: abstract adapter contract intentionally uses pass for unimplemented interface method.
+core-api/app/services/sso.py:35 # WHY OK: abstract adapter contract intentionally uses pass for unimplemented interface method.
+core-api/alembic/script.py.mako:19 # WHY OK: Alembic template requires "pass" placeholder for empty migrations.
+core-api/alembic/script.py.mako:23 # WHY OK: Alembic template requires "pass" placeholder for empty migrations.
+core-api/tests/test_ticket_rules.py:29 # WHY OK: test-only stubbed metrics sink intentionally no-op.
+telephony-bot/app/providers.py:15 # WHY OK: empty exception class body uses Python pass idiom.
+web-portal/components/UserDashboard.tsx:45 # WHY OK: HTML input placeholder attribute for UX text hint.
+web-portal/components/UserDashboard.tsx:47 # WHY OK: HTML textarea placeholder attribute for UX text hint.
+ARCHITECTURE.md:197 # WHY OK: documentation phrase describes anti-placeholder policy.
