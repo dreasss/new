@@ -1,4 +1,5 @@
 :root {
+# codex/define-architecture-for-support-system-cphd8w
   --primary-color: #2f6bff;
   --bg: #f7f9fc;
   --surface: #ffffff;
@@ -450,4 +451,33 @@ tbody td {
   .mobileOnly {
     display: inline-flex;
   }
+=======
+  --primary-color: #2563eb;
+  --brand-name: Support Portal;
+}
+
+body {
+  margin: 0;
+  font-family: Arial, Helvetica, sans-serif;
+  background: #f3f4f6;
+  color: #111827;
+}
+
+main {
+  border-top: 4px solid var(--primary-color);
+  max-width: 900px;
+  margin: 2rem auto;
+  background: #ffffff;
+  padding: 1.5rem;
+  border-radius: 10px;
+}
+
+input, textarea, button {
+  margin: 0.3rem 0;
+  padding: 0.55rem;
+}
+
+button {
+  cursor: pointer;
+# main
 }

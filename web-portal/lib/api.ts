@@ -1,3 +1,4 @@
+# codex/define-architecture-for-support-system-cphd8w
 export const API = process.env.NEXT_PUBLIC_CORE_API_URL || "http://localhost:8000";
 
 export type ApiError = {
@@ -46,10 +47,16 @@ export type SystemSettingResponse = {
 };
 
 function tokenHeader(): HeadersInit {
+=======
+export const API = process.env.NEXT_PUBLIC_CORE_API_URL;
+
+export function tokenHeader(): HeadersInit {
+# main
   const token = typeof window === "undefined" ? null : localStorage.getItem("token");
   return token ? { Authorization: `Bearer ${token}` } : {};
 }
 
+# codex/define-architecture-for-support-system-cphd8w
 async function parseResponse<T>(response: Response): Promise<T> {
   const text = await response.text();
   if (!response.ok) {
@@ -168,4 +175,16 @@ export async function saveAdminSetting(section: string, config: Record<string, u
 
 export async function fetchBranding(): Promise<{ config: Record<string, unknown> }> {
   return apiGet<{ config: Record<string, unknown> }>("/api/v1/public/branding");
+=======
+export async function apiGet(path: string) {
+  return fetch(`${API}${path}`, { headers: { ...tokenHeader() } });
+}
+
+export async function apiPost(path: string, body: unknown, extraHeaders?: HeadersInit) {
+  return fetch(`${API}${path}`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json", ...tokenHeader(), ...extraHeaders },
+    body: JSON.stringify(body),
+  });
+# main
 }

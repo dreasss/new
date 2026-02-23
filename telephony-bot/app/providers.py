@@ -1,5 +1,16 @@
 import hashlib
+# codex/define-architecture-for-support-system-cphd8w
 import logging
+=======
+# codex/define-architecture-for-support-system-j19u82
+import logging
+=======
+# codex/define-architecture-for-support-system-e3u2rv
+import logging
+
+# main
+# main
+# main
 import os
 import struct
 import wave
@@ -8,6 +19,13 @@ from typing import Protocol
 
 import httpx
 
+# codex/define-architecture-for-support-system-cphd8w
+=======
+# codex/define-architecture-for-support-system-j19u82
+=======
+# codex/define-architecture-for-support-system-e3u2rv
+# main
+# main
 logger = logging.getLogger(__name__)
 
 
@@ -15,14 +33,37 @@ class ProviderConfigError(RuntimeError):
     pass
 
 
+# codex/define-architecture-for-support-system-cphd8w
+=======
+# codex/define-architecture-for-support-system-j19u82
+=======
+# main
+
+# main
+# main
 class TTSProviderAdapter(Protocol):
     async def synthesize(self, text: str, voice: str, speed: float, volume: int, key_hint: str) -> str:
         """Return media URI for Asterisk playback, e.g. sound:custom_tts/file"""
 
 
 class STTProviderAdapter(Protocol):
+# codex/define-architecture-for-support-system-cphd8w
     async def transcribe(self, wav_path: str) -> str: ...
 
+=======
+# codex/define-architecture-for-support-system-j19u82
+    async def transcribe(self, wav_path: str) -> str: ...
+
+=======
+# codex/define-architecture-for-support-system-e3u2rv
+    async def transcribe(self, wav_path: str) -> str: ...
+
+    async def transcribe(self, wav_path: str) -> str:
+        ...
+# main
+
+# main
+# main
 
 class LocalFileTTSAdapter:
     def __init__(self, sounds_dir: str) -> None:
@@ -76,9 +117,24 @@ class SpeechKitTTSAdapter:
             "sampleRateHertz": "16000",
             "folderId": self.folder_id,
         }
+# codex/define-architecture-for-support-system-cphd8w
         logger.info(
             "speechkit_tts_request folder_id=%s voice=%s speed=%s volume=%s key_hint=%s", self.folder_id, voice, speed, volume, key_hint
         )
+=======
+# codex/define-architecture-for-support-system-j19u82
+        logger.info(
+            "speechkit_tts_request folder_id=%s voice=%s speed=%s volume=%s key_hint=%s", self.folder_id, voice, speed, volume, key_hint
+        )
+=======
+# codex/define-architecture-for-support-system-e3u2rv
+        logger.info(
+            "speechkit_tts_request folder_id=%s voice=%s speed=%s volume=%s key_hint=%s", self.folder_id, voice, speed, volume, key_hint
+        )
+
+# main
+# main
+# main
         async with httpx.AsyncClient(timeout=20.0) as client:
             response = await client.post(
                 "https://tts.api.cloud.yandex.net/speech/v1/tts:synthesize",
@@ -103,13 +159,36 @@ class SpeechKitSTTAdapter:
     async def transcribe(self, wav_path: str) -> str:
         with open(wav_path, "rb") as f:
             audio = f.read()
+# codex/define-architecture-for-support-system-cphd8w
         params: dict[str, str | int] = {
+=======
+# codex/define-architecture-for-support-system-j19u82
+        params: dict[str, str | int] = {
+=======
+# codex/define-architecture-for-support-system-e3u2rv
+        params: dict[str, str | int] = {
+
+        params = {
+# main
+# main
+# main
             "lang": "ru-RU",
             "folderId": self.folder_id,
             "format": "lpcm",
             "sampleRateHertz": 16000,
         }
+# codex/define-architecture-for-support-system-cphd8w
         logger.info("speechkit_stt_request folder_id=%s wav_path=%s bytes=%s", self.folder_id, wav_path, len(audio))
+=======
+# codex/define-architecture-for-support-system-j19u82
+        logger.info("speechkit_stt_request folder_id=%s wav_path=%s bytes=%s", self.folder_id, wav_path, len(audio))
+=======
+# codex/define-architecture-for-support-system-e3u2rv
+        logger.info("speechkit_stt_request folder_id=%s wav_path=%s bytes=%s", self.folder_id, wav_path, len(audio))
+
+# main
+# main
+# main
         async with httpx.AsyncClient(timeout=30.0) as client:
             response = await client.post(
                 "https://stt.api.cloud.yandex.net/speech/v1/stt:recognize",
@@ -127,18 +206,47 @@ class EmptySTTAdapter:
         return ""
 
 
+# codex/define-architecture-for-support-system-cphd8w
+=======
+# codex/define-architecture-for-support-system-j19u82
+=======
+# codex/define-architecture-for-support-system-e3u2rv
+# main
+# main
 def _require_speechkit_credentials(mode: str, key: str, folder: str) -> None:
     if mode == "speechkit" and (not key or not folder):
         raise ProviderConfigError("SpeechKit provider requested but SPEECHKIT_API_KEY/SPEECHKIT_FOLDER_ID are missing")
 
 
+# codex/define-architecture-for-support-system-cphd8w
+=======
+# codex/define-architecture-for-support-system-j19u82
+=======
+
+# main
+# main
+# main
 def build_tts_adapter() -> tuple[TTSProviderAdapter, str]:
     mode = os.getenv("TTS_PROVIDER", "asterisk_assets")
     key = os.getenv("SPEECHKIT_API_KEY", "")
     folder = os.getenv("SPEECHKIT_FOLDER_ID", "")
     sounds_dir = os.getenv("BOT_SOUNDS_DIR", "/shared/sounds/custom_tts")
+# codex/define-architecture-for-support-system-cphd8w
     _require_speechkit_credentials(mode, key, folder)
     if mode == "speechkit":
+=======
+# codex/define-architecture-for-support-system-j19u82
+    _require_speechkit_credentials(mode, key, folder)
+    if mode == "speechkit":
+=======
+# codex/define-architecture-for-support-system-e3u2rv
+    _require_speechkit_credentials(mode, key, folder)
+    if mode == "speechkit":
+
+    if mode == "speechkit" and key and folder:
+# main
+# main
+# main
         return SpeechKitTTSAdapter(key, folder, sounds_dir), "speechkit"
     return LocalFileTTSAdapter(sounds_dir), "local_assets"
 
@@ -147,7 +255,21 @@ def build_stt_adapter() -> tuple[STTProviderAdapter, str]:
     mode = os.getenv("STT_PROVIDER", "test_dtmf")
     key = os.getenv("SPEECHKIT_API_KEY", "")
     folder = os.getenv("SPEECHKIT_FOLDER_ID", "")
+# codex/define-architecture-for-support-system-cphd8w
     _require_speechkit_credentials(mode, key, folder)
     if mode == "speechkit":
+=======
+# codex/define-architecture-for-support-system-j19u82
+    _require_speechkit_credentials(mode, key, folder)
+    if mode == "speechkit":
+=======
+# codex/define-architecture-for-support-system-e3u2rv
+    _require_speechkit_credentials(mode, key, folder)
+    if mode == "speechkit":
+
+    if mode == "speechkit" and key and folder:
+# main
+# main
+# main
         return SpeechKitSTTAdapter(key, folder), "speechkit"
     return EmptySTTAdapter(), "dtmf_fallback"

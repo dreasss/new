@@ -83,17 +83,35 @@ on_exit() {
 trap on_exit EXIT
 
 step "Sanity checks"
+# codex/define-architecture-for-support-system-cphd8w
+=======
+# codex/define-architecture-for-support-system-j19u82
+=======
+if ! command -v docker >/dev/null 2>&1; then
+  echo "docker binary is required for runtime acceptance" >&2
+  exit 127
+fi
+# main
+# main
 if ! command -v curl >/dev/null 2>&1; then
   echo "curl is required for runtime acceptance" >&2
   exit 127
 fi
 
+# codex/define-architecture-for-support-system-cphd8w
+=======
+# codex/define-architecture-for-support-system-j19u82
+# main
 if ! command -v docker >/dev/null 2>&1; then
   step "Docker is unavailable; proving runtime via GitHub Actions"
   run ./scripts/runtime_proof_actions.sh
   exit 0
 fi
 
+# codex/define-architecture-for-support-system-cphd8w
+=======
+# main
+# main
 step "Bring up compose stack"
 run docker compose up -d --build
 
